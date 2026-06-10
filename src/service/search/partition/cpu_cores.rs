@@ -28,14 +28,10 @@ use super::sql_context::PartitionSqlContext;
 pub(crate) async fn estimated_secs(
     trace_id: &str,
     _ctx: &PartitionSqlContext,
-    is_http_req: bool,
+    role_group: RoleGroup,
     original_size: usize,
 ) -> Result<usize, Error> {
-    let role_group = if is_http_req {
-        Some(RoleGroup::Interactive)
-    } else {
-        Some(RoleGroup::Background)
-    };
+    let role_group = Some(role_group);
     let nodes = get_cached_online_querier_nodes(role_group)
         .await
         .unwrap_or_default();
